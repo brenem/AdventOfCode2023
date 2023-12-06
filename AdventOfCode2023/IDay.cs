@@ -1,8 +1,8 @@
 ﻿namespace AdventOfCode2023
 {
-    internal interface IDay<out T>
+    public interface IDay<in TIn, out TOut>
     {
-        public IDay<T> Run();
-        public T Result { get; }
+        public IDay<TIn, TOut> Run(TIn inputData);
+        public TOut Result { get; }
     }
 }

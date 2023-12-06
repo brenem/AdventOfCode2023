@@ -3,4 +3,6 @@ using AdventOfCode2023.Days;
 
 Console.WriteLine("Hello, World!");
 
-Console.WriteLine($"{nameof(Day1Part2)} result: {new Day1Part2().Run().Result}");
+var input = File.ReadAllLines(Path.Combine("InputData", "Day2.txt"));
+
+Console.WriteLine($"{nameof(Day2)} result: {new Day2().Part2(input)}");
