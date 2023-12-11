@@ -1,8 +1,19 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using AdventOfCode2023.Days;
+using System.Reflection;
 
 Console.WriteLine("Hello, World!");
 
-var input = File.ReadAllLines(Path.Combine("InputData", "Day2.txt"));
+var day = 5;
+var part = 1;
 
-Console.WriteLine($"{nameof(Day2)} result: {new Day2().Part2(input)}");
+var input = File.ReadAllLines(Path.Combine("InputData", $"Day{day}.txt"));
+
+var dayType = Assembly.GetExecutingAssembly().GetTypes().Single(x => x.Name == $"Day{day}");
+var partMethod = dayType!.GetMethod($"Part{part}");
+
+var dayInstance = Activator.CreateInstance(dayType!);
+
+Console.WriteLine("Invoking...");
+var result = partMethod!.Invoke(dayInstance, new[] { input });
+
+Console.WriteLine($"Day{day} result: {result}");
