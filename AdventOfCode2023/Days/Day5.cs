@@ -1,24 +1,91 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
+﻿using System.Collections.Concurrent;
 
 namespace AdventOfCode2023;
 
 public class Day5
 {
-    public long Part1(string[] input)
+    public Task<uint> Part1(string[] input)
     {
-        var seeds = input[0].Split("seeds: ")[1].Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToArray();
-        var seedToSoilMap = ParseMap(seeds, FindSection("seed-to-soil", input));
-        var soilToFertilizerMap = ParseMap(seedToSoilMap.Select(x => x.Key), FindSection("soil-to-fertilizer", input));
-        var fertilizerToWaterMap = ParseMap(soilToFertilizerMap.Select(x => x.Key), FindSection("fertilizer-to-water", input));
-        var waterToLightMap = ParseMap(fertilizerToWaterMap.Select(x => x.Key), FindSection("water-to-light", input));
-        var lightToTempMap = ParseMap(waterToLightMap.Select(x => x.Key), FindSection("light-to-temperature", input));
-        var tempToHumidityMap = ParseMap(lightToTempMap.Select(x => x.Key), FindSection("temperature-to-humidity", input));
-        var humidityToLocationMap = ParseMap(tempToHumidityMap.Select(x => x.Key), FindSection("humidity-to-location", input));
+        var seeds = input[0].Split("seeds: ")[1].Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(uint.Parse).ToArray();
+        return FindLowestLocation(seeds, input);
+    }
 
-        var locations = seeds.Select(seed => FindLocation(seed, seedToSoilMap, soilToFertilizerMap, fertilizerToWaterMap, waterToLightMap, lightToTempMap, tempToHumidityMap, humidityToLocationMap));
+    public async Task<uint> Part2(string[] input)
+    {
+        var seedValues = input[0].Split("seeds: ")[1].Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(uint.Parse).ToArray();
+        var seedRanges = GetSeedRanges(seedValues);
+
+        var allSeeds = new List<uint>();
+        foreach (var (Start, Length) in seedRanges)
+        {
+            uint[] seeds = new uint[Length];
+            for (uint i = 0; i < Length; i++)
+            {
+                seeds[i] = Start + i;
+            }
+
+            allSeeds.AddRange(seeds);
+        }
+
+        Console.WriteLine("Got seeds. find lowest location id...");
+
+        var locationId = await FindLowestLocation([.. allSeeds], input);
+
+        return locationId;
+    }
+
+    private async Task<uint> FindLowestLocation(uint[] seeds, string[] input)
+    {
+        Console.WriteLine("seed to soil...");
+        var seedToSoilMap = ParseMap(FindSection("seed-to-soil", input).ToArray());
+
+        Console.WriteLine("soil to fertilizer...");
+        var soilToFertilizerMap = ParseMap(FindSection("soil-to-fertilizer", input).ToArray());
+
+        Console.WriteLine("fertilizer to water...");
+        var fertilizerToWaterMap = ParseMap(FindSection("fertilizer-to-water", input).ToArray());
+
+        Console.WriteLine("water to light...");
+        var waterToLightMap = ParseMap(FindSection("water-to-light", input).ToArray());
+
+        Console.WriteLine("light to temp...");
+        var lightToTempMap = ParseMap(FindSection("light-to-temperature", input).ToArray());
+
+        Console.WriteLine("temp to humidity...");
+        var tempToHumidityMap = ParseMap(FindSection("temperature-to-humidity", input).ToArray());
+
+        Console.WriteLine("humidity to location...");
+        var humidityToLocationMap = ParseMap(FindSection("humidity-to-location", input).ToArray());
+
+        var locations = new ConcurrentBag<uint>();
+
+        await Parallel.ForEachAsync(seeds, (seed, ct) =>
+        {
+            var soilId = seedToSoilMap.FindDestination(seed);
+            var fertilizerId = soilToFertilizerMap.FindDestination(soilId);
+            var waterId = fertilizerToWaterMap.FindDestination(fertilizerId);
+            var lightId = waterToLightMap.FindDestination(waterId);
+            var tempId = lightToTempMap.FindDestination(lightId);
+            var humidityId = tempToHumidityMap.FindDestination(tempId);
+            var locationId = humidityToLocationMap.FindDestination(humidityId);
+
+            locations.Add(locationId);
+
+            return ValueTask.CompletedTask;
+        });
+
         return locations.Min();
+    }
+
+    private IEnumerable<(uint Start, uint Length)> GetSeedRanges(uint[] seeds)
+    {
+        for (var i = 0; i < seeds.Length; i += 2)
+        {
+            var start = seeds[i];
+            var length = seeds[i + 1];
+
+            yield return (start, length);
+        }
     }
 
     private IEnumerable<string> FindSection(string name, string[] input)
@@ -38,74 +105,45 @@ public class Day5
         }
     }
 
-    private Dictionary<long, long> ParseMap(IEnumerable<long> leftIds, IEnumerable<string> sectionInput)
+    private IEnumerable<MapRow> ParseMap(string[] sectionInput)
     {
-        var map = new Dictionary<long, long>();
+        var maps = new List<MapRow>();
 
-        foreach (var line in sectionInput)
+        for (var i = 0; i < sectionInput.Length; i++)
         {
-            var parameters = line.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToArray();
+            var line = sectionInput[i];
+            var parameters = line.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(uint.Parse).ToArray();
             var destStart = parameters[0];
             var srcStart = parameters[1];
             var length = parameters[2];
 
-            var destRange = CreateRange(destStart, length).ToArray();
-            var srcRange = CreateRange(srcStart, length).ToArray();
-
-            for (var i = 0; i < srcRange.Length; i++)
-            {
-                var src = srcRange[i];
-
-                long dest;
-                if (i < destRange.Length)
-                    dest = destRange[i];
-                else
-                    dest = src;
-
-                map.Add(src, dest);
-            }
+            var mapRow = new MapRow(destStart, srcStart, length);
+            maps.Add(mapRow);
         }
 
-        var unmapped = leftIds.Except(map.Select(m => m.Key));
-        foreach (var id in unmapped)
-            map.Add(id, id);
-
-        return map;
+        return maps;
     }
+}
 
-    private IEnumerable<long> CreateRange(long start, long count)
+public record MapRow(uint Dest, uint Src, uint Length)
+{
+    public uint? FindDest(uint srcValue)
     {
-        var nums = new List<long>();
+        if (srcValue < Src)
+            return null;
 
-        var limit = start + count;
-        while (start < limit)
-        {
-            nums.Add(start);
-            start++;
-        }
+        var srcEnd = Src + Length - 1;
 
-        return nums;
+        if (srcValue > srcEnd)
+            return null;
+
+        var diff = srcValue - Src;
+        return Dest + diff;
     }
+}
 
-    private long FindLocation(long seed,
-        Dictionary<long, long> seedToSoilMap,
-        Dictionary<long, long> soilToFertilizerMap,
-        Dictionary<long, long> fertilizerToWaterMap,
-        Dictionary<long, long> waterToLightMap,
-        Dictionary<long, long> lightToTempMap,
-        Dictionary<long, long> tempToHumidityMap,
-        Dictionary<long, long> humidityToLocationMap)
-    {
-        var location = from ss in seedToSoilMap
-                       join sf in soilToFertilizerMap on ss.Value equals sf.Key
-                       join fw in fertilizerToWaterMap on sf.Value equals fw.Key
-                       join wl in waterToLightMap on fw.Value equals wl.Key
-                       join lt in lightToTempMap on wl.Value equals lt.Key
-                       join th in tempToHumidityMap on lt.Value equals th.Key
-                       join hl in humidityToLocationMap on th.Value equals hl.Key
-                       where ss.Key == seed
-                       select hl.Value;
-
-        return location.SingleOrDefault();
-    }
+public static class Day5Extensions
+{
+    public static uint FindDestination(this IEnumerable<MapRow> maps, uint srcValue)
+        => maps.Select(x => x.FindDest(srcValue)).FirstOrDefault(x => x != null) ?? srcValue;
 }
