@@ -28,6 +28,6 @@ public class Day9Tests
 
         var result = day.Part2(input);
 
-        result.Should().Be(5905);
+        result.Should().Be(2);
     }
 }

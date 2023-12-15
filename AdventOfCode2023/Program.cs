@@ -7,7 +7,7 @@ using AdventOfCode2023;
 Console.WriteLine("Hello, World!");
 
 var day = 9;
-var part = 1;
+var part = 2;
 
 var input = File.ReadAllLines(Path.Combine("InputData", $"Day{day}.txt"));
 
