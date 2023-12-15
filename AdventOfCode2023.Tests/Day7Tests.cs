@@ -30,12 +30,15 @@ public class Day7Tests
 
         var input = new[]
         {
-            "Time:      7  15   30",
-            "Distance:  9  40  200"
+            "32T3K 765",
+            "T55J5 684",
+            "KK677 28",
+            "KTJJT 220",
+            "QQQJA 483"
         };
 
         var result = day.Part2(input);
 
-        result.Should().Be(71503);
+        result.Should().Be(5905);
     }
 }

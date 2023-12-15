@@ -3,9 +3,10 @@ using System.Diagnostics;
 using System.Reflection;
 using AdventOfCode2023;
 
+
 Console.WriteLine("Hello, World!");
 
-var day = 7;
+var day = 9;
 var part = 1;
 
 var input = File.ReadAllLines(Path.Combine("InputData", $"Day{day}.txt"));
