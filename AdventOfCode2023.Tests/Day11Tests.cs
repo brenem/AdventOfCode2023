@@ -4,28 +4,77 @@ namespace AdventOfCode2023.Tests;
 
 public class Day11Tests
 {
-    private string[] _testInput = new[]
-    {
-        ""
-    };
-
     [Fact]
     public void Part1Test()
     {
         var day = new Day11();
 
-        var result = day.Part1(_testInput);
+        var testInput = new[]
+        {
+            "...#......",
+            ".......#..",
+            "#.........",
+            "..........",
+            "......#...",
+            ".#........",
+            ".........#",
+            "..........",
+            ".......#..",
+            "#...#....."
+        };
 
-        result.Should().Be(6440);
+        var result = day.Part1(testInput);
+
+        result.Should().Be(374);
     }
 
     [Fact]
-    public void Part2Test()
+    public void Part2Test1()
     {
         var day = new Day11();
 
-        var result = day.Part2(_testInput);
+        var testInput = new[]
+        {
+            "...#......",
+            ".......#..",
+            "#.........",
+            "..........",
+            "......#...",
+            ".#........",
+            ".........#",
+            "..........",
+            ".......#..",
+            "#...#....."
+        };
+        var multiplier = 10;
 
-        result.Should().Be(5905);
+        var result = day.CalculateWithMultipler(testInput, multiplier);
+
+        result.Should().Be(1030);
+    }
+
+    [Fact]
+    public void Part2Test2()
+    {
+        var day = new Day11();
+
+        var testInput = new[]
+        {
+            "...#......",
+            ".......#..",
+            "#.........",
+            "..........",
+            "......#...",
+            ".#........",
+            ".........#",
+            "..........",
+            ".......#..",
+            "#...#....."
+        };
+        var multiplier = 100;
+
+        var result = day.CalculateWithMultipler(testInput, multiplier);
+
+        result.Should().Be(8410);
     }
 }
