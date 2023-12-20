@@ -2,12 +2,15 @@
 using System.Diagnostics;
 using System.Reflection;
 using AdventOfCode2023;
-
+using PostSharp.Patterns.Caching;
+using PostSharp.Patterns.Caching.Backends;
 
 Console.WriteLine("Hello, World!");
 
-var day = 11;
-var part = 2;
+CachingServices.DefaultBackend = new MemoryCachingBackend();
+
+var day = 13;
+var part = 1;
 
 var input = File.ReadAllLines(Path.Combine("InputData", $"Day{day}.txt"));
 

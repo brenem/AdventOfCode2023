@@ -113,4 +113,9 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="PostSharp.Patterns.Caching" Version="2023.0.8" />
+    <PackageReference Include="System.Runtime.Caching" Version="8.0.0" />
+  </ItemGroup>
+
 </Project>
