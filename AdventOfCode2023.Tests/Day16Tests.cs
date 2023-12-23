@@ -4,28 +4,51 @@ namespace AdventOfCode2023.Tests;
 
 public class Day16Tests
 {
-    private string[] _testInput = new[]
-    {
-        ""
-    };
-
     [Fact]
     public void Part1Test()
     {
         var day = new Day16();
 
-        var result = day.Part1(_testInput);
+        var testInput = new[]
+        {
+            ".|...\\....",
+            "|.-.\\.....",
+            ".....|-...",
+            "........|.",
+            "..........",
+            ".........\\",
+            "..../.\\\\..",
+            ".-.-/..|..",
+            ".|....-|.\\",
+            "..//.|...."
+        };
 
-        result.Should().Be(6440);
+        var result = day.Part1(testInput);
+
+        result.Should().Be(46);
     }
 
     [Fact]
-    public void Part2Test()
+    public async Task Part2Test()
     {
         var day = new Day16();
 
-        var result = day.Part2(_testInput);
+        var testInput = new[]
+        {
+            ".|...\\....",
+            "|.-.\\.....",
+            ".....|-...",
+            "........|.",
+            "..........",
+            ".........\\",
+            "..../.\\\\..",
+            ".-.-/..|..",
+            ".|....-|.\\",
+            "..//.|...."
+        };
 
-        result.Should().Be(5905);
+        var result = await day.Part2(testInput);
+
+        result.Should().Be(51);
     }
 }

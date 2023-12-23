@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
 
-namespace AdventOfCode2023;
+namespace AdventOfCode2023.Extensions;
 
-public static class Extensions
+public static class MethodInfoExtensions
 {
-    public static async Task<object?> InvokeAsync(this MethodInfo @this, object obj, params object[] parameters)
+    public static async Task<object?> InvokeAsync(this MethodInfo mi, object obj, params object[] parameters)
     {
-        if (@this.Invoke(obj, parameters) is Task task)
+        if (mi.Invoke(obj, parameters) is Task task)
         {
             await task!.ConfigureAwait(false);
             var resultProperty = task.GetType().GetProperty("Result");

@@ -1,7 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.Diagnostics;
 using System.Reflection;
-using AdventOfCode2023;
+using AdventOfCode2023.Extensions;
 using PostSharp.Patterns.Caching;
 using PostSharp.Patterns.Caching.Backends;
 
@@ -9,7 +9,7 @@ Console.WriteLine("Hello, World!");
 
 CachingServices.DefaultBackend = new MemoryCachingBackend();
 
-var day = 16;
+var day = 17;
 var part = 1;
 
 var input = File.ReadAllLines(Path.Combine("InputData", $"Day{day}.txt"));

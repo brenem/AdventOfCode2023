@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿using AdventOfCode2023.Extensions;
 
 namespace AdventOfCode2023;
 #nullable disable
@@ -195,19 +195,5 @@ public class Day14
                 }
             }
         }
-    }
-}
-
-static class Day14Extensions
-{
-    public static string ToReadableMap(this char[][] map)
-    {
-        var sb = new StringBuilder();
-        foreach (var row in map)
-        {
-            sb.AppendLine(new string(row));
-        }
-
-        return sb.ToString();
     }
 }

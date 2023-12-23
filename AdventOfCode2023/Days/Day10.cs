@@ -1,13 +1,16 @@
-﻿namespace AdventOfCode2023;
+﻿using AdventOfCode2023.Extensions.Extensions;
+using AdventOfCode2023.Models;
+
+namespace AdventOfCode2023;
 #nullable disable
 
 public class Day10
 {
     public int Part1(string[] input)
     {
-        var pipes = input.SelectMany((row, rowIdx) => row.Select((pipe, pipeIdx) => ParsePipe(pipe, pipeIdx, rowIdx, input)).Where(x => x.PipeChar != '.')).ToList();
+        var pipes = input.SelectMany((row, rowIdx) => row.Select((pipe, pipeIdx) => ParsePipe(pipe, pipeIdx, rowIdx, input)).Where(x => x.GridChar != '.')).ToList();
 
-        var currentPipe = pipes.Single(x => x.PipeChar == 'S');
+        var currentPipe = pipes.Single(x => x.GridChar == 'S');
         var stepCount = 0;
 
         PipeNode prevPipe = null;
@@ -19,7 +22,7 @@ public class Day10
 
             stepCount++;
 
-            if (currentPipe.PipeChar == 'S')
+            if (currentPipe.GridChar == 'S')
                 break;
         }
 
@@ -34,10 +37,10 @@ public class Day10
         var pipes = nodes.Where(x => x.Direction != PipeDirection.Ground).ToList();
         var grounds = nodes.Where(x => x.Direction == PipeDirection.Ground).ToList();
 
-        var pipesInLoop = new List<PipeNode>();
+        var pipesInLoop = new List<GridNode>();
         var steps = 0;
 
-        var currentPipe = pipes.Single(x => x.PipeChar == 'S');
+        var currentPipe = pipes.Single(x => x.GridChar == 'S');
 
         PipeNode prevPipe = null;
         while (true)
@@ -49,7 +52,7 @@ public class Day10
             prevPipe = currentPipe;
             currentPipe = nextPipeLocation;
 
-            if (currentPipe.PipeChar == 'S')
+            if (currentPipe.GridChar == 'S')
                 break;
         }
 
@@ -59,7 +62,7 @@ public class Day10
         return area - (steps / 2) + 1;
     }
 
-    double ShoelaceArea(List<PipeLocation> locations)
+    double ShoelaceArea(List<GridLocation> locations)
     {
         var n = locations.Count;
         double a = 0.0;
@@ -73,10 +76,10 @@ public class Day10
 
     PipeNode FindNextPipeNode(PipeNode prevPipe, PipeNode currPipe, IEnumerable<PipeNode> pipes)
     {
-        PipeNode topNode = currPipe.Top.FindPipeNode(pipes);
-        PipeNode bottomNode = currPipe.Bottom.FindPipeNode(pipes);
-        PipeNode rightNode = currPipe.Right.FindPipeNode(pipes);
-        PipeNode leftNode = currPipe.Left.FindPipeNode(pipes);
+        var topNode = currPipe.Top.FindGridNode(pipes);
+        var bottomNode = currPipe.Bottom.FindGridNode(pipes);
+        var rightNode = currPipe.Right.FindGridNode(pipes);
+        var leftNode = currPipe.Left.FindGridNode(pipes);
 
         var top = topNode != null && topNode.Location != prevPipe?.Location ? topNode : null;
         var bottom = bottomNode != null && bottomNode.Location != prevPipe?.Location ? bottomNode : null;
@@ -118,61 +121,57 @@ public class Day10
             nextLine = pipeLines[rowIdx + 1];
         }
 
-        PipeLocation pipeLeft = null, pipeRight = null, pipeTop = null, pipeBottom = null;
+        GridLocation pipeLeft = null, pipeRight = null, pipeTop = null, pipeBottom = null;
 
         if (colIdx == 0)
         {
-            pipeRight = new PipeLocation(rowIdx, colIdx + 1);
+            pipeRight = new GridLocation(rowIdx, colIdx + 1);
 
             if (prevLine != null)
-                pipeTop = new PipeLocation(rowIdx - 1, colIdx);
+                pipeTop = new GridLocation(rowIdx - 1, colIdx);
 
             if (nextLine != null)
-                pipeBottom = new PipeLocation(rowIdx + 1, colIdx);
+                pipeBottom = new GridLocation(rowIdx + 1, colIdx);
         }
         else if (colIdx == currentLine.Length - 1)
         {
-            pipeLeft = new PipeLocation(rowIdx, colIdx - 1);
+            pipeLeft = new GridLocation(rowIdx, colIdx - 1);
 
             if (prevLine != null)
-                pipeTop = new PipeLocation(rowIdx - 1, colIdx);
+                pipeTop = new GridLocation(rowIdx - 1, colIdx);
 
             if (nextLine != null)
-                pipeBottom = new PipeLocation(rowIdx + 1, colIdx);
+                pipeBottom = new GridLocation(rowIdx + 1, colIdx);
         }
         else
         {
-            pipeRight = new PipeLocation(rowIdx, colIdx + 1);
+            pipeRight = new GridLocation(rowIdx, colIdx + 1);
 
-            pipeLeft = new PipeLocation(rowIdx, colIdx - 1);
+            pipeLeft = new GridLocation(rowIdx, colIdx - 1);
 
             if (prevLine != null)
-                pipeTop = new PipeLocation(rowIdx - 1, colIdx);
+                pipeTop = new GridLocation(rowIdx - 1, colIdx);
 
             if (nextLine != null)
-                pipeBottom = new PipeLocation(rowIdx + 1, colIdx);
+                pipeBottom = new GridLocation(rowIdx + 1, colIdx);
         }
 
-        return new PipeNode(pipeChar, new PipeLocation(rowIdx, colIdx), pipeDirection, pipeTop, pipeBottom, pipeRight, pipeLeft);
+        return new PipeNode
+        {
+            GridChar = pipeChar,
+            Location = new GridLocation(rowIdx, colIdx),
+            Direction = pipeDirection,
+            Top = pipeTop,
+            Bottom = pipeBottom,
+            Right = pipeRight,
+            Left = pipeLeft
+        };
     }
 
-    //bool IsConnected(PipeDirection a, PipeDirection b)
-    //{
-    //    return new { a, b } switch
-    //    {
-    //        { a: PipeDirection.Vertical, b: PipeDirection.SouthToWest } => true,
-    //        { a: PipeDirection.Vertical, b: PipeDirection.SouthToEast } => true,
-    //        { a: PipeDirection.Vertical, b: PipeDirection.NorthToWest } => true,
-    //        { a: PipeDirection.Vertical, b: PipeDirection.NorthToEast } => true,
-
-    //        { a: PipeDirection.Horizontal, b: PipeDirection.SouthToWest } => true,
-    //        { a: PipeDirection.Horizontal, b: PipeDirection.SouthToEast } => true,
-    //        { a: PipeDirection.Horizontal, b: PipeDirection.NorthToWest } => true,
-    //        { a: PipeDirection.Horizontal, b: PipeDirection.NorthToEast } => true,
-
-    //        { a: PipeDirection.NorthToEast, b: }
-    //    };
-    //}
+    class PipeNode : GridNode
+    {
+        public PipeDirection Direction { get; set; }
+    }
 
     PipeDirection ParsePipeDirection(char pipeChar) => pipeChar switch
     {
@@ -188,16 +187,6 @@ public class Day10
     };
 }
 
-record PipeNode(char PipeChar, PipeLocation Location, PipeDirection Direction, PipeLocation Top, PipeLocation Bottom, PipeLocation Right, PipeLocation Left)
-{
-    public override string ToString()
-    {
-        return $"'{PipeChar}', ({Location.Row}, {Location.Col}), N: ({Top.Row}, {Top.Col}), S: ({Bottom.Row}, {Bottom.Col}), E: ({Right.Row}, {Right.Col}), W: ({Left.Row}, {Left.Col})";
-    }
-}
-
-record PipeLocation(int Row, int Col);
-
 enum PipeDirection
 {
     Ground,
@@ -208,12 +197,4 @@ enum PipeDirection
     NorthToWest,
     SouthToWest,
     SouthToEast
-}
-
-static class Day10Extensions
-{
-    public static PipeNode FindPipeNode(this PipeLocation location, IEnumerable<PipeNode> pipeNodes)
-    {
-        return pipeNodes.SingleOrDefault(x => x.Location == location);
-    }
 }
