@@ -8,9 +8,9 @@ public class Day10
 {
     public int Part1(string[] input)
     {
-        var pipes = input.SelectMany((row, rowIdx) => row.Select((pipe, pipeIdx) => ParsePipe(pipe, pipeIdx, rowIdx, input)).Where(x => x.GridChar != '.')).ToList();
+        var pipes = input.SelectMany((row, rowIdx) => row.Select((pipe, pipeIdx) => ParsePipe(pipe, pipeIdx, rowIdx, input)).Where(x => x.Value != '.')).ToList();
 
-        var currentPipe = pipes.Single(x => x.GridChar == 'S');
+        var currentPipe = pipes.Single(x => x.Value == 'S');
         var stepCount = 0;
 
         PipeNode prevPipe = null;
@@ -22,7 +22,7 @@ public class Day10
 
             stepCount++;
 
-            if (currentPipe.GridChar == 'S')
+            if (currentPipe.Value == 'S')
                 break;
         }
 
@@ -40,7 +40,7 @@ public class Day10
         var pipesInLoop = new List<GridNode>();
         var steps = 0;
 
-        var currentPipe = pipes.Single(x => x.GridChar == 'S');
+        var currentPipe = pipes.Single(x => x.Value == 'S');
 
         PipeNode prevPipe = null;
         while (true)
@@ -52,7 +52,7 @@ public class Day10
             prevPipe = currentPipe;
             currentPipe = nextPipeLocation;
 
-            if (currentPipe.GridChar == 'S')
+            if (currentPipe.Value == 'S')
                 break;
         }
 
@@ -76,10 +76,10 @@ public class Day10
 
     PipeNode FindNextPipeNode(PipeNode prevPipe, PipeNode currPipe, IEnumerable<PipeNode> pipes)
     {
-        var topNode = currPipe.Top.FindGridNode(pipes);
-        var bottomNode = currPipe.Bottom.FindGridNode(pipes);
-        var rightNode = currPipe.Right.FindGridNode(pipes);
-        var leftNode = currPipe.Left.FindGridNode(pipes);
+        var topNode = currPipe.North.FindGridNode(pipes);
+        var bottomNode = currPipe.South.FindGridNode(pipes);
+        var rightNode = currPipe.East.FindGridNode(pipes);
+        var leftNode = currPipe.West.FindGridNode(pipes);
 
         var top = topNode != null && topNode.Location != prevPipe?.Location ? topNode : null;
         var bottom = bottomNode != null && bottomNode.Location != prevPipe?.Location ? bottomNode : null;
@@ -158,13 +158,13 @@ public class Day10
 
         return new PipeNode
         {
-            GridChar = pipeChar,
+            Value = pipeChar,
             Location = new GridLocation(rowIdx, colIdx),
             Direction = pipeDirection,
-            Top = pipeTop,
-            Bottom = pipeBottom,
-            Right = pipeRight,
-            Left = pipeLeft
+            North = pipeTop,
+            South = pipeBottom,
+            East = pipeRight,
+            West = pipeLeft
         };
     }
 

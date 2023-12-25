@@ -4,19 +4,31 @@ namespace AdventOfCode2023.Tests;
 
 public class Day17Tests
 {
-    private string[] _testInput = new[]
-    {
-        ""
-    };
-
     [Fact]
     public void Part1Test()
     {
         var day = new Day17();
 
-        var result = day.Part1(_testInput);
+        var testInput = new[]
+        {
+            "2413432311323",
+            "3215453535623",
+            "3255245654254",
+            "3446585845452",
+            "4546657867536",
+            "1438598798454",
+            "4457876987766",
+            "3637877979653",
+            "4654967986887",
+            "4564679986453",
+            "1224686865563",
+            "2546548887735",
+            "4322674655533"
+        };
 
-        result.Should().Be(6440);
+        var result = day.Part1(testInput);
+
+        result.Should().Be(102);
     }
 
     [Fact]
@@ -24,8 +36,25 @@ public class Day17Tests
     {
         var day = new Day17();
 
-        var result = day.Part2(_testInput);
+        var testInput = new[]
+        {
+            "2413432311323",
+            "3215453535623",
+            "3255245654254",
+            "3446585845452",
+            "4546657867536",
+            "1438598798454",
+            "4457876987766",
+            "3637877979653",
+            "4654967986887",
+            "4564679986453",
+            "1224686865563",
+            "2546548887735",
+            "4322674655533"
+        };
 
-        result.Should().Be(5905);
+        var result = day.Part2(testInput);
+
+        result.Should().Be(94);
     }
 }

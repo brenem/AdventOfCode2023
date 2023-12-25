@@ -4,34 +4,33 @@ public record GridLocation(int Row, int Col);
 
 public class GridNode
 {
-    public char GridChar { get; set; }
+    public char Value { get; set; }
     public GridLocation Location { get; set; }
-    public GridLocation Top { get; set; }
-    public GridLocation Bottom { get; set; }
-    public GridLocation Right { get; set; }
-    public GridLocation Left { get; set; }
+    public GridLocation North { get; set; }
+    public GridLocation South { get; set; }
+    public GridLocation East { get; set; }
+    public GridLocation West { get; set; }
 
     public override bool Equals(object? obj)
     {
-        return obj is GridNode n && GridChar == n.GridChar && Location == n.Location;
+        return obj is GridNode n && Value == n.Value && Location == n.Location;
     }
 
     public override int GetHashCode()
     {
-        return GridChar.GetHashCode() ^ Location.GetHashCode();
+        return Value.GetHashCode() ^ Location.GetHashCode();
     }
 
     public override string ToString()
     {
-        return $"'{GridChar}', ({Location.Row}, {Location.Col}), N: ({Top?.Row}, {Top?.Col}), S: ({Bottom?.Row}, {Bottom?.Col}), E: ({Right?.Row}, {Right?.Col}), W: ({Left?.Row}, {Left?.Col})";
+        return $"{Value}, ({Location.Row}, {Location.Col}), N: ({North?.Row}, {North?.Col}), S: ({South?.Row}, {South?.Col}), E: ({East?.Row}, {East?.Col}), W: ({West?.Row}, {West?.Col})";
     }
 }
 
-[Flags]
 public enum GridDirection
 {
     North,
-    South,
     East,
+    South,
     West
 }

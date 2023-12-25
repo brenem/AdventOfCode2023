@@ -1,4 +1,5 @@
-﻿using AdventOfCode2023.Extensions.Extensions;
+﻿using AdventOfCode2023.Extensions;
+using AdventOfCode2023.Extensions.Extensions;
 using AdventOfCode2023.Models;
 
 namespace AdventOfCode2023;
@@ -8,7 +9,8 @@ public class Day16
 {
     public int Part1(string[] input)
     {
-        var tiles = input.SelectMany((row, rowIdx) => row.Select((tile, colIdx) => ParseGridNode(tile, rowIdx, colIdx, input.Length, input[0].Length))).ToList();
+        //var tiles = input.SelectMany((row, rowIdx) => row.Select((tile, colIdx) => ParseGridNode(tile, rowIdx, colIdx, input.Length, input[0].Length))).ToList();
+        var tiles = input.AsGridNodes().ToList();
         var startTile = tiles.Find(x => x.Location.Row == 0 && x.Location.Col == 0);
         var startDirection = GridDirection.East;
 
@@ -17,7 +19,8 @@ public class Day16
 
     public async Task<int> Part2(string[] input)
     {
-        var tiles = input.SelectMany((row, rowIdx) => row.Select((tile, colIdx) => ParseGridNode(tile, rowIdx, colIdx, input.Length, input[0].Length))).ToList();
+        //var tiles = input.SelectMany((row, rowIdx) => row.Select((tile, colIdx) => ParseGridNode(tile, rowIdx, colIdx, input.Length, input[0].Length))).ToList();
+        var tiles = input.AsGridNodes().ToList();
         var tests = new[]
         {
             (GridDirection.South, tiles.Where(x => x.Location.Row == 0)),
@@ -84,81 +87,17 @@ public class Day16
         return energizedCount;
     }
 
-    GridNode ParseGridNode(char gridChar, int rowIdx, int colIdx, int rowLength, int colLength)
-    {
-        int? prevRowIdx = null;
-        int? nextRowIdx = null;
-
-        if (rowIdx == 0)
-        {
-            nextRowIdx = rowIdx + 1;
-        }
-        else if (rowIdx == rowLength - 1)
-        {
-            prevRowIdx = rowIdx - 1;
-        }
-        else
-        {
-            prevRowIdx = rowIdx - 1;
-            nextRowIdx = rowIdx + 1;
-        }
-
-        GridLocation tileLeft = null, tileRight = null, tileTop = null, tileBottom = null;
-
-        if (colIdx == 0)
-        {
-            tileRight = new GridLocation(rowIdx, colIdx + 1);
-
-            if (prevRowIdx != null)
-                tileTop = new GridLocation(prevRowIdx.Value, colIdx);
-
-            if (nextRowIdx != null)
-                tileBottom = new GridLocation(nextRowIdx.Value, colIdx);
-        }
-        else if (colIdx == colLength - 1)
-        {
-            tileLeft = new GridLocation(rowIdx, colIdx - 1);
-
-            if (prevRowIdx != null)
-                tileTop = new GridLocation(prevRowIdx.Value, colIdx);
-
-            if (nextRowIdx != null)
-                tileBottom = new GridLocation(nextRowIdx.Value, colIdx);
-        }
-        else
-        {
-            tileRight = new GridLocation(rowIdx, colIdx + 1);
-            tileLeft = new GridLocation(rowIdx, colIdx - 1);
-
-            if (prevRowIdx != null)
-                tileTop = new GridLocation(prevRowIdx.Value, colIdx);
-
-            if (nextRowIdx != null)
-                tileBottom = new GridLocation(nextRowIdx.Value, colIdx);
-        }
-
-        return new GridNode
-        {
-            GridChar = gridChar,
-            Location = new GridLocation(rowIdx, colIdx),
-            Top = tileTop,
-            Bottom = tileBottom,
-            Right = tileRight,
-            Left = tileLeft
-        };
-    }
-
     IEnumerable<(GridDirection DestDirection, GridNode DestTile)> TraverseNode(GridDirection srcDir, GridNode srcTile, IEnumerable<GridNode> nodes, List<Beam> visited)
     {
         if (srcTile is null)
             yield break;
 
-        var northNode = srcTile.Top.FindGridNode(nodes);
-        var southNode = srcTile.Bottom.FindGridNode(nodes);
-        var eastNode = srcTile.Right.FindGridNode(nodes);
-        var westNode = srcTile.Left.FindGridNode(nodes);
+        var northNode = srcTile.North.FindGridNode(nodes);
+        var southNode = srcTile.South.FindGridNode(nodes);
+        var eastNode = srcTile.East.FindGridNode(nodes);
+        var westNode = srcTile.West.FindGridNode(nodes);
 
-        var srcChar = srcTile.GridChar;
+        var srcChar = srcTile.Value;
 
         IEnumerable<(GridDirection DestDir, GridNode DestNode)> dests = new { srcDir, srcChar } switch
         {
@@ -194,17 +133,6 @@ public class Day16
 
                 yield return (DestDir, DestNode);
             }
-            //if (DestNode is not null)
-            //{
-            //    var visit = new Beam(DestDir, DestNode.Location);
-            //    if (visited.Contains(visit))
-            //        continue;
-
-            //    visited.Add(visit);
-
-            //    //Console.WriteLine($"traversing: {srcDir} -> {DestDir}: '{srcChar}' ({srcTile.Location.Row}, {srcTile.Location.Col}), '{DestNode?.GridChar}' ({DestNode?.Location.Row}, {DestNode?.Location.Col})");
-            //    TraverseNode(DestDir, DestNode, nodes, visited);
-            //}
         }
     }
 }
