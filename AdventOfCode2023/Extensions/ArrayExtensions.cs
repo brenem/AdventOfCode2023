@@ -42,44 +42,44 @@ public static class ArrayExtensions
             nextRowIdx = rowIdx + 1;
         }
 
-        GridLocation tileLeft = null, tileRight = null, tileTop = null, tileBottom = null;
+        GridLocation<int> tileLeft = null, tileRight = null, tileTop = null, tileBottom = null;
 
         if (colIdx == 0)
         {
-            tileRight = new GridLocation(rowIdx, colIdx + 1);
+            tileRight = new GridLocation<int>(rowIdx, colIdx + 1);
 
             if (prevRowIdx != null)
-                tileTop = new GridLocation(prevRowIdx.Value, colIdx);
+                tileTop = new GridLocation<int>(prevRowIdx.Value, colIdx);
 
             if (nextRowIdx != null)
-                tileBottom = new GridLocation(nextRowIdx.Value, colIdx);
+                tileBottom = new GridLocation<int>(nextRowIdx.Value, colIdx);
         }
         else if (colIdx == colLength - 1)
         {
-            tileLeft = new GridLocation(rowIdx, colIdx - 1);
+            tileLeft = new GridLocation<int>(rowIdx, colIdx - 1);
 
             if (prevRowIdx != null)
-                tileTop = new GridLocation(prevRowIdx.Value, colIdx);
+                tileTop = new GridLocation<int>(prevRowIdx.Value, colIdx);
 
             if (nextRowIdx != null)
-                tileBottom = new GridLocation(nextRowIdx.Value, colIdx);
+                tileBottom = new GridLocation<int>(nextRowIdx.Value, colIdx);
         }
         else
         {
-            tileRight = new GridLocation(rowIdx, colIdx + 1);
-            tileLeft = new GridLocation(rowIdx, colIdx - 1);
+            tileRight = new GridLocation<int>(rowIdx, colIdx + 1);
+            tileLeft = new GridLocation<int>(rowIdx, colIdx - 1);
 
             if (prevRowIdx != null)
-                tileTop = new GridLocation(prevRowIdx.Value, colIdx);
+                tileTop = new GridLocation<int>(prevRowIdx.Value, colIdx);
 
             if (nextRowIdx != null)
-                tileBottom = new GridLocation(nextRowIdx.Value, colIdx);
+                tileBottom = new GridLocation<int>(nextRowIdx.Value, colIdx);
         }
 
         return new GridNode
         {
             Value = value,
-            Location = new GridLocation(rowIdx, colIdx),
+            Location = new GridLocation<int>(rowIdx, colIdx),
             North = tileTop,
             South = tileBottom,
             East = tileRight,

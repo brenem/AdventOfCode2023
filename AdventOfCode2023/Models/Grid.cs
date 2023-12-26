@@ -1,15 +1,15 @@
 ﻿namespace AdventOfCode2023.Models;
 
-public record GridLocation(int Row, int Col);
+public record GridLocation<T>(T Row, T Col);
 
 public class GridNode
 {
     public char Value { get; set; }
-    public GridLocation Location { get; set; }
-    public GridLocation North { get; set; }
-    public GridLocation South { get; set; }
-    public GridLocation East { get; set; }
-    public GridLocation West { get; set; }
+    public GridLocation<int> Location { get; set; }
+    public GridLocation<int> North { get; set; }
+    public GridLocation<int> South { get; set; }
+    public GridLocation<int> East { get; set; }
+    public GridLocation<int> West { get; set; }
 
     public override bool Equals(object? obj)
     {

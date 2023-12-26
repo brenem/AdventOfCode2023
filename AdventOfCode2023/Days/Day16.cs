@@ -1,5 +1,4 @@
 ﻿using AdventOfCode2023.Extensions;
-using AdventOfCode2023.Extensions.Extensions;
 using AdventOfCode2023.Models;
 
 namespace AdventOfCode2023;
@@ -137,7 +136,7 @@ public class Day16
     }
 }
 
-record Beam(GridDirection Direction, GridLocation Location);
+record Beam(GridDirection Direction, GridLocation<int> Location);
 
 record TileLocation(int Row, int Col);
 

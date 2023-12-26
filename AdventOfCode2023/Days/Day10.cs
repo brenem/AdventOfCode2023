@@ -1,4 +1,4 @@
-﻿using AdventOfCode2023.Extensions.Extensions;
+﻿using AdventOfCode2023.Extensions;
 using AdventOfCode2023.Models;
 
 namespace AdventOfCode2023;
@@ -57,21 +57,9 @@ public class Day10
         }
 
         var farthestPoint = steps / 2;
-        var area = ShoelaceArea(pipesInLoop.Select(x => x.Location).ToList());
+        var area = pipesInLoop.Select(x => x.Location).ToShoelaceArea();
 
         return area - (steps / 2) + 1;
-    }
-
-    double ShoelaceArea(List<GridLocation> locations)
-    {
-        var n = locations.Count;
-        double a = 0.0;
-        for (int i = 0; i < n - 1; i++)
-        {
-            a += locations[i].Row * locations[i + 1].Col - locations[i + 1].Row * locations[i].Col;
-        }
-
-        return Math.Abs(a + locations[n - 1].Row * locations[0].Col - locations[0].Row * locations[n - 1].Col) / 2.0;
     }
 
     PipeNode FindNextPipeNode(PipeNode prevPipe, PipeNode currPipe, IEnumerable<PipeNode> pipes)
@@ -121,45 +109,45 @@ public class Day10
             nextLine = pipeLines[rowIdx + 1];
         }
 
-        GridLocation pipeLeft = null, pipeRight = null, pipeTop = null, pipeBottom = null;
+        GridLocation<int> pipeLeft = null, pipeRight = null, pipeTop = null, pipeBottom = null;
 
         if (colIdx == 0)
         {
-            pipeRight = new GridLocation(rowIdx, colIdx + 1);
+            pipeRight = new GridLocation<int>(rowIdx, colIdx + 1);
 
             if (prevLine != null)
-                pipeTop = new GridLocation(rowIdx - 1, colIdx);
+                pipeTop = new GridLocation<int>(rowIdx - 1, colIdx);
 
             if (nextLine != null)
-                pipeBottom = new GridLocation(rowIdx + 1, colIdx);
+                pipeBottom = new GridLocation<int>(rowIdx + 1, colIdx);
         }
         else if (colIdx == currentLine.Length - 1)
         {
-            pipeLeft = new GridLocation(rowIdx, colIdx - 1);
+            pipeLeft = new GridLocation<int>(rowIdx, colIdx - 1);
 
             if (prevLine != null)
-                pipeTop = new GridLocation(rowIdx - 1, colIdx);
+                pipeTop = new GridLocation<int>(rowIdx - 1, colIdx);
 
             if (nextLine != null)
-                pipeBottom = new GridLocation(rowIdx + 1, colIdx);
+                pipeBottom = new GridLocation<int>(rowIdx + 1, colIdx);
         }
         else
         {
-            pipeRight = new GridLocation(rowIdx, colIdx + 1);
+            pipeRight = new GridLocation<int>(rowIdx, colIdx + 1);
 
-            pipeLeft = new GridLocation(rowIdx, colIdx - 1);
+            pipeLeft = new GridLocation<int>(rowIdx, colIdx - 1);
 
             if (prevLine != null)
-                pipeTop = new GridLocation(rowIdx - 1, colIdx);
+                pipeTop = new GridLocation<int>(rowIdx - 1, colIdx);
 
             if (nextLine != null)
-                pipeBottom = new GridLocation(rowIdx + 1, colIdx);
+                pipeBottom = new GridLocation<int>(rowIdx + 1, colIdx);
         }
 
         return new PipeNode
         {
             Value = pipeChar,
-            Location = new GridLocation(rowIdx, colIdx),
+            Location = new GridLocation<int>(rowIdx, colIdx),
             Direction = pipeDirection,
             North = pipeTop,
             South = pipeBottom,
