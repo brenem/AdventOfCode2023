@@ -9,7 +9,7 @@ Console.WriteLine("Hello, World!");
 
 CachingServices.DefaultBackend = new MemoryCachingBackend();
 
-var day = 19;
+var day = 21;
 var part = 1;
 
 var input = File.ReadAllLines(Path.Combine("InputData", $"Day{day}.txt"));
