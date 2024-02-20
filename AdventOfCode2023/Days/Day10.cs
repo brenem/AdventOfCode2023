@@ -37,7 +37,7 @@ public class Day10
         var pipes = nodes.Where(x => x.Direction != PipeDirection.Ground).ToList();
         var grounds = nodes.Where(x => x.Direction == PipeDirection.Ground).ToList();
 
-        var pipesInLoop = new List<GridNode>();
+        var pipesInLoop = new List<GridTile>();
         var steps = 0;
 
         var currentPipe = pipes.Single(x => x.Value == 'S');
@@ -109,45 +109,45 @@ public class Day10
             nextLine = pipeLines[rowIdx + 1];
         }
 
-        GridLocation<int> pipeLeft = null, pipeRight = null, pipeTop = null, pipeBottom = null;
+        Coordinate<int> pipeLeft = null, pipeRight = null, pipeTop = null, pipeBottom = null;
 
         if (colIdx == 0)
         {
-            pipeRight = new GridLocation<int>(rowIdx, colIdx + 1);
+            pipeRight = new Coordinate<int>(rowIdx, colIdx + 1);
 
             if (prevLine != null)
-                pipeTop = new GridLocation<int>(rowIdx - 1, colIdx);
+                pipeTop = new Coordinate<int>(rowIdx - 1, colIdx);
 
             if (nextLine != null)
-                pipeBottom = new GridLocation<int>(rowIdx + 1, colIdx);
+                pipeBottom = new Coordinate<int>(rowIdx + 1, colIdx);
         }
         else if (colIdx == currentLine.Length - 1)
         {
-            pipeLeft = new GridLocation<int>(rowIdx, colIdx - 1);
+            pipeLeft = new Coordinate<int>(rowIdx, colIdx - 1);
 
             if (prevLine != null)
-                pipeTop = new GridLocation<int>(rowIdx - 1, colIdx);
+                pipeTop = new Coordinate<int>(rowIdx - 1, colIdx);
 
             if (nextLine != null)
-                pipeBottom = new GridLocation<int>(rowIdx + 1, colIdx);
+                pipeBottom = new Coordinate<int>(rowIdx + 1, colIdx);
         }
         else
         {
-            pipeRight = new GridLocation<int>(rowIdx, colIdx + 1);
+            pipeRight = new Coordinate<int>(rowIdx, colIdx + 1);
 
-            pipeLeft = new GridLocation<int>(rowIdx, colIdx - 1);
+            pipeLeft = new Coordinate<int>(rowIdx, colIdx - 1);
 
             if (prevLine != null)
-                pipeTop = new GridLocation<int>(rowIdx - 1, colIdx);
+                pipeTop = new Coordinate<int>(rowIdx - 1, colIdx);
 
             if (nextLine != null)
-                pipeBottom = new GridLocation<int>(rowIdx + 1, colIdx);
+                pipeBottom = new Coordinate<int>(rowIdx + 1, colIdx);
         }
 
         return new PipeNode
         {
             Value = pipeChar,
-            Location = new GridLocation<int>(rowIdx, colIdx),
+            Location = new Coordinate<int>(rowIdx, colIdx),
             Direction = pipeDirection,
             North = pipeTop,
             South = pipeBottom,
@@ -156,7 +156,7 @@ public class Day10
         };
     }
 
-    class PipeNode : GridNode
+    class PipeNode : GridTile
     {
         public PipeDirection Direction { get; set; }
     }

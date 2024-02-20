@@ -21,8 +21,8 @@ public class Day18
     long FindTotalArea(IEnumerable<(GridDirection Direction, long Moves)> turns)
     {
         var queue = new Queue<(GridDirection Direction, long Moves)>(turns);
-        var location = new GridLocation<long>(0, 0);
-        var visited = new List<GridLocation<long>>();
+        var location = new Coordinate<long>(0, 0);
+        var visited = new List<Coordinate<long>>();
         var perimeter = 0L;
 
         while (queue.Count > 0)
@@ -47,7 +47,7 @@ public class Day18
                 _ => col
             };
 
-            location = new GridLocation<long>(row, col);
+            location = new Coordinate<long>(row, col);
             visited.Add(location);
         }
 

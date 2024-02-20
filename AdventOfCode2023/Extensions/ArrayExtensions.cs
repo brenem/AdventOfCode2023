@@ -5,7 +5,7 @@ namespace AdventOfCode2023.Extensions;
 
 public static class ArrayExtensions
 {
-    public static IEnumerable<GridNode> AsGridNodes(this IEnumerable<string> input)
+    public static IEnumerable<GridTile> AsGridTiles(this IEnumerable<string> input)
     {
         return input.SelectMany((row, rowIdx) =>
             row.Select((col, colIdx) =>
@@ -23,7 +23,7 @@ public static class ArrayExtensions
         return sb.ToString();
     }
 
-    private static GridNode ParseGridNode(char value, int rowIdx, int colIdx, int rowLength, int colLength)
+    private static GridTile ParseGridNode(char value, int rowIdx, int colIdx, int rowLength, int colLength)
     {
         int? prevRowIdx = null;
         int? nextRowIdx = null;
@@ -42,44 +42,44 @@ public static class ArrayExtensions
             nextRowIdx = rowIdx + 1;
         }
 
-        GridLocation<int> tileLeft = null, tileRight = null, tileTop = null, tileBottom = null;
+        Coordinate<int> tileLeft = null, tileRight = null, tileTop = null, tileBottom = null;
 
         if (colIdx == 0)
         {
-            tileRight = new GridLocation<int>(rowIdx, colIdx + 1);
+            tileRight = new Coordinate<int>(rowIdx, colIdx + 1);
 
             if (prevRowIdx != null)
-                tileTop = new GridLocation<int>(prevRowIdx.Value, colIdx);
+                tileTop = new Coordinate<int>(prevRowIdx.Value, colIdx);
 
             if (nextRowIdx != null)
-                tileBottom = new GridLocation<int>(nextRowIdx.Value, colIdx);
+                tileBottom = new Coordinate<int>(nextRowIdx.Value, colIdx);
         }
         else if (colIdx == colLength - 1)
         {
-            tileLeft = new GridLocation<int>(rowIdx, colIdx - 1);
+            tileLeft = new Coordinate<int>(rowIdx, colIdx - 1);
 
             if (prevRowIdx != null)
-                tileTop = new GridLocation<int>(prevRowIdx.Value, colIdx);
+                tileTop = new Coordinate<int>(prevRowIdx.Value, colIdx);
 
             if (nextRowIdx != null)
-                tileBottom = new GridLocation<int>(nextRowIdx.Value, colIdx);
+                tileBottom = new Coordinate<int>(nextRowIdx.Value, colIdx);
         }
         else
         {
-            tileRight = new GridLocation<int>(rowIdx, colIdx + 1);
-            tileLeft = new GridLocation<int>(rowIdx, colIdx - 1);
+            tileRight = new Coordinate<int>(rowIdx, colIdx + 1);
+            tileLeft = new Coordinate<int>(rowIdx, colIdx - 1);
 
             if (prevRowIdx != null)
-                tileTop = new GridLocation<int>(prevRowIdx.Value, colIdx);
+                tileTop = new Coordinate<int>(prevRowIdx.Value, colIdx);
 
             if (nextRowIdx != null)
-                tileBottom = new GridLocation<int>(nextRowIdx.Value, colIdx);
+                tileBottom = new Coordinate<int>(nextRowIdx.Value, colIdx);
         }
 
-        return new GridNode
+        return new GridTile
         {
             Value = value,
-            Location = new GridLocation<int>(rowIdx, colIdx),
+            Location = new Coordinate<int>(rowIdx, colIdx),
             North = tileTop,
             South = tileBottom,
             East = tileRight,

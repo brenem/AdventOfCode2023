@@ -1,19 +1,25 @@
-﻿namespace AdventOfCode2023.Models;
+﻿using System.Numerics;
+#nullable disable
 
-public record GridLocation<T>(T Row, T Col);
+namespace AdventOfCode2023.Models;
 
-public class GridNode
+public record Coordinate<T>(T Row, T Col) where T : ISignedNumber<T>
+{
+    public static Coordinate<T> operator +(Coordinate<T> a, Coordinate<T> b) => new(a.Row + b.Row, a.Col + b.Col);
+}
+
+public class GridTile
 {
     public char Value { get; set; }
-    public GridLocation<int> Location { get; set; }
-    public GridLocation<int> North { get; set; }
-    public GridLocation<int> South { get; set; }
-    public GridLocation<int> East { get; set; }
-    public GridLocation<int> West { get; set; }
+    public Coordinate<int> Location { get; set; }
+    public Coordinate<int> North { get; set; }
+    public Coordinate<int> South { get; set; }
+    public Coordinate<int> East { get; set; }
+    public Coordinate<int> West { get; set; }
 
     public override bool Equals(object? obj)
     {
-        return obj is GridNode n && Value == n.Value && Location == n.Location;
+        return obj is GridTile n && Value == n.Value && Location == n.Location;
     }
 
     public override int GetHashCode()

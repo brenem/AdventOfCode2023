@@ -9,7 +9,7 @@ public class Day16
     public int Part1(string[] input)
     {
         //var tiles = input.SelectMany((row, rowIdx) => row.Select((tile, colIdx) => ParseGridNode(tile, rowIdx, colIdx, input.Length, input[0].Length))).ToList();
-        var tiles = input.AsGridNodes().ToList();
+        var tiles = input.AsGridTiles().ToList();
         var startTile = tiles.Find(x => x.Location.Row == 0 && x.Location.Col == 0);
         var startDirection = GridDirection.East;
 
@@ -19,7 +19,7 @@ public class Day16
     public async Task<int> Part2(string[] input)
     {
         //var tiles = input.SelectMany((row, rowIdx) => row.Select((tile, colIdx) => ParseGridNode(tile, rowIdx, colIdx, input.Length, input[0].Length))).ToList();
-        var tiles = input.AsGridNodes().ToList();
+        var tiles = input.AsGridTiles().ToList();
         var tests = new[]
         {
             (GridDirection.South, tiles.Where(x => x.Location.Row == 0)),
@@ -57,14 +57,14 @@ public class Day16
         return maxEnergizedCount;
     }
 
-    int GetEnergizedCount(GridDirection startDirection, GridNode startTile, IEnumerable<GridNode> tiles)
+    int GetEnergizedCount(GridDirection startDirection, GridTile startTile, IEnumerable<GridTile> tiles)
     {
         var visited = new List<Beam>
         {
             new(startDirection, startTile.Location)
         };
 
-        Queue<(GridDirection DestDirection, GridNode DestTile)> queue = new();
+        Queue<(GridDirection DestDirection, GridTile DestTile)> queue = new();
         queue.Enqueue((startDirection, startTile));
 
         while (queue.Count > 0)
@@ -86,7 +86,7 @@ public class Day16
         return energizedCount;
     }
 
-    IEnumerable<(GridDirection DestDirection, GridNode DestTile)> TraverseNode(GridDirection srcDir, GridNode srcTile, IEnumerable<GridNode> nodes, List<Beam> visited)
+    IEnumerable<(GridDirection DestDirection, GridTile DestTile)> TraverseNode(GridDirection srcDir, GridTile srcTile, IEnumerable<GridTile> nodes, List<Beam> visited)
     {
         if (srcTile is null)
             yield break;
@@ -98,7 +98,7 @@ public class Day16
 
         var srcChar = srcTile.Value;
 
-        IEnumerable<(GridDirection DestDir, GridNode DestNode)> dests = new { srcDir, srcChar } switch
+        IEnumerable<(GridDirection DestDir, GridTile DestNode)> dests = new { srcDir, srcChar } switch
         {
             { srcDir: GridDirection.South, srcChar: '.' } or { srcDir: GridDirection.South, srcChar: '|' } => [(srcDir, southNode)],
             { srcDir: GridDirection.South, srcChar: '\\' } => [(GridDirection.East, eastNode)],
@@ -136,7 +136,7 @@ public class Day16
     }
 }
 
-record Beam(GridDirection Direction, GridLocation<int> Location);
+record Beam(GridDirection Direction, Coordinate<int> Location);
 
 record TileLocation(int Row, int Col);
 

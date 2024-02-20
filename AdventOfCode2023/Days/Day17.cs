@@ -11,7 +11,7 @@ public class Day17
         var queue = new PriorityQueue<Block, int>();
         var visited = new List<string>();
 
-        queue.Enqueue(new Block(new GridLocation<int>(0, 0), GridDirection.East, 0), 0);
+        queue.Enqueue(new Block(new Coordinate<int>(0, 0), GridDirection.East, 0), 0);
 
         var heatLoss = 0;
 
@@ -42,8 +42,8 @@ public class Day17
         var queue = new PriorityQueue<Block, int>();
         var visited = new List<string>();
 
-        queue.Enqueue(new Block(new GridLocation<int>(0, 0), GridDirection.East, 0), 0);
-        queue.Enqueue(new Block(new GridLocation<int>(0, 0), GridDirection.South, 0), 0);
+        queue.Enqueue(new Block(new Coordinate<int>(0, 0), GridDirection.East, 0), 0);
+        queue.Enqueue(new Block(new Coordinate<int>(0, 0), GridDirection.South, 0), 0);
 
         var heatLoss = 0;
 
@@ -92,7 +92,7 @@ public class Day17
         queue.Enqueue(nextBlock, nextBlock.HeatLoss);
     }
 
-    record Block(GridLocation<int> Position, GridDirection Direction, int PathLength)
+    record Block(Coordinate<int> Position, GridDirection Direction, int PathLength)
     {
         public int HeatLoss { get; set; }
     }
